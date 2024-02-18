@@ -73,6 +73,8 @@ instances = driver.find_element(By.CLASS_NAME, "instances")
 # Recursive function to explore recipes
 def explore_recipes():
     # Loop through each item in item_divs
+    items_div = driver.find_element(By.CLASS_NAME, "items")
+    item_divs = items_div.find_elements(By.CLASS_NAME, "item")
     for item_div in item_divs:
 
         select_one = current_item
@@ -81,7 +83,6 @@ def explore_recipes():
         # Spawn an instance of each item
         spawn_item(select_one)
         spawn_item(select_two)
-        
 
         # Wait for the new instances to appear
         # WebDriverWait(driver, 10).until(
@@ -98,8 +99,8 @@ def explore_recipes():
         # print("Combining", instance_one.text, "+", instance_two.text)
         combine_instances(instance_one,instance_two)
 
-        # Call the recursive function to explore recipes further
-        # explore_recipes()
+    # Call the recursive function to explore recipes further
+    explore_recipes()
 
 # Call the recursive function to start exploring recipes
 explore_recipes()
