@@ -18,6 +18,9 @@ driver = webdriver.Chrome(options=chrome_options)
 # Open the Infinite Craft game
 driver.get("https://neal.fun/infinite-craft/")
 
+# Set to store tried combinations
+tried_combinations = set()
+
 def spawn_item(item_div):
     item_div.click()
 
@@ -70,8 +73,9 @@ current_item = item_divs[0]
 # Find the "instances" container div
 instances = driver.find_element(By.CLASS_NAME, "instances")
 
-# Recursive function to explore recipes
 def explore_recipes():
+    global tried_combinations  # Access the global set
+
     # Loop through each item in item_divs
     items_div = driver.find_element(By.CLASS_NAME, "items")
     item_divs = items_div.find_elements(By.CLASS_NAME, "item")
@@ -79,6 +83,11 @@ def explore_recipes():
 
         select_one = current_item
         select_two = item_div
+
+        # Check if the combination has been tried before
+        combination_key = tuple(sorted([select_one.text, select_two.text]))
+        if combination_key in tried_combinations:
+            continue  # Skip if the combination has already been tried
 
         # Spawn an instance of each item
         spawn_item(select_one)
@@ -98,6 +107,9 @@ def explore_recipes():
         # Combine instance one and two
         # print("Combining", instance_one.text, "+", instance_two.text)
         combine_instances(instance_one,instance_two)
+
+        # Add the combination to the set of tried combinations
+        tried_combinations.add(combination_key)
 
     # Call the recursive function to explore recipes further
     explore_recipes()
